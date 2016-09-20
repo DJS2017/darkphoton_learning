@@ -131,12 +131,15 @@ def update_massdiff(rawtable, featuretable):
 
 
     # update massdiff to featuretable
-    SQL = "UPDATE %s SET " % featuretable
-    SQL = SQL + "massdiff=%s WHERE eid=%s"
+    #SQL = "UPDATE %s SET " % featuretable
+    #SQL = SQL + "massdiff=%s WHERE eid=%s"
+    SQL = "INSERT INTO %s(eid,massdiff) " % featuretable
+    SQL = SQL + "VALUES(%s,%s);"
 
     for i in range(frame.shape[0]):
         result = frame.loc[i]
-        cur_nl.execute(SQL,(result['massdiff'].tolist(),result['eid']))
+        curs.execute(SQL, (result['eid'], result['massdiff'].tolist()))
+        #cur_nl.execute(SQL,(result['massdiff'].tolist(),result['eid']))
         if(i%1000 == 0):
             print i
             conn.commit()

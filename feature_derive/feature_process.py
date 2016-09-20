@@ -112,7 +112,7 @@ def update_massdiff(rawtable, featuretable):
     conn = psycopg2.connect(database="darkphoton",user="yunxuanli")
     cur_nl = conn.cursor()
 
-    cur_nl.execute("SELECT eid,nups,upsd1idx,upsd2idx,upsd3idx,v0mass FROM %s WHERE nups>0" % featuretable)
+    cur_nl.execute("SELECT eid,nups,upsd1idx,upsd2idx,upsd3idx,v0mass FROM %s WHERE nups>0" % rawtable)
     rows_nl = cur_nl.fetchall()
     data_mc = np.array(rows_nl, dtype=object)
     data = {'eid':data_mc[:,0],

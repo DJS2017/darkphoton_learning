@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import psycopg2
 import csv
 
-def CreateFeatureTable(database, user, sequencename, tablename, host=None):
+def CreateFeatureTable(database, user, sequencename, featuretable, host=None):
     """
     This function connects to a psql database, and create a sequence for the use 
     of indexing events.
@@ -19,36 +19,35 @@ def CreateFeatureTable(database, user, sequencename, tablename, host=None):
     -database:  	the database name 	(string)
     -user:	    	the username of database 	(string)
     -host:	    	the host where database lives in 	(string)
-    -tablename: 	the name of table which we will create feature later on 	(string)
-    -sequencename:	the name of sequence which will be used as an index for tablename	(string) 
+    -featuretable: 	the name of table which we will create feature later on 	(string)
+    -sequencename:	the name of sequence which will be used as an index for featuretable	(string) 
     """
 
     # connect to database
     conn = psycopg2.connect(database=database, user=user, host=host)
-    with conn:
-        with conn.cursor() as curs:
+    curs = conn.cursor()
 
-            # obtain number of events in row table
-            curs.execute("SELECT start_value, last_value, increment_by FROM %s" % sequencename)
-            seq_attr_raw = curs.fetchall()
-            seq_attr = np.array(seq_attr_raw, dtype=object)[0]
+    # obtain number of events in row table by counting the number in its sequence.
+    curs.execute("SELECT start_value, last_value, increment_by FROM %s" % sequencename)
+    seq_attr_raw = curs.fetchall()
+    seq_attr = np.array(seq_attr_raw, dtype=object)[0]
 
-            number_of_events = (seq_attr[1]-seq_attr[0]+1) / seq_attr[2]
+    number_of_events = (seq_attr[1]-seq_attr[0]+1) / seq_attr[2]
 
-            # create feature table
-            SQL = "CREATE TABLE %s (eid int);"
-            curs.execute(SQL % tablename)
+
+    # create feature table
+    SQL = "CREATE TABLE %s (eid int);"
+    curs.execute(SQL % featuretable)
+    conn.commit()
+
+    # insert eid index into feature table
+    for index in range(1,number_of_events+1):
+        curs.execute("INSERT INTO %s VALUES(%s)" % (featuretable, index))
+        if(index % 1000 == 0):
             conn.commit()
-
-            # insert eid index into feature table
-            for index in range(1,number_of_events+1):
-                curs.execute("INSERT INTO %s VALUES(%s)" % (tablename, index))
-                if(index % 1000 == 0):
-                    conn.commit()
-            conn.commit()
+    conn.commit()
                             
-            curs.close()
-
+    curs.close()
     conn.close()
 
 
@@ -97,16 +96,23 @@ def massdiff(record):
 
 
 
-def update_massdiff():
+def update_massdiff(rawtable, featuretable):
     """
     This function uses massdiff() to update each record's massdiff column in database.
     This is a candidate feature.
+
+    parameters:
+    -------------
+    -rawtable:		name of raw table 	(string)
+    -featuretable:	name of feature table 	(string)
     """
+
+
     # connect to database, and obtain data
     conn = psycopg2.connect(database="darkphoton",user="yunxuanli")
     cur_nl = conn.cursor()
 
-    cur_nl.execute('''SELECT eid,nups,upsd1idx,upsd2idx,upsd3idx,v0mass FROM mcevent WHERE nups>0''')
+    cur_nl.execute("SELECT eid,nups,upsd1idx,upsd2idx,upsd3idx,v0mass FROM %s WHERE nups>0" % featuretable)
     rows_nl = cur_nl.fetchall()
     data_mc = np.array(rows_nl, dtype=object)
     data = {'eid':data_mc[:,0],
@@ -123,12 +129,16 @@ def update_massdiff():
     for i in range(frame.shape[0]):
         frame['massdiff'][i] = massdiff(frame.loc[i])
 
-    # update massdiff
+
+    # update massdiff to featuretable
+    SQL = "UPDATE %s SET " % featuretable
+    SQL = SQL + "massdiff=%s WHERE eid=%s"
 
     for i in range(frame.shape[0]):
         result = frame.loc[i]
-        cur_nl.execute("UPDATE mcevent SET massdiff=%s WHERE eid=%s",(result['massdiff'].tolist(),result['eid']))
-
+        cur_nl.execute(SQL,(result['massdiff'].tolist(),result['eid']))
+        if(i%1000 == 0):
+			conn.commit()
     conn.commit()
 
 

@@ -51,7 +51,7 @@ def massdiff(record):
 
 
 
-def update_massdiff(rawtable, featuretable):
+def update_massdiff(rawtable):
     """
     This function uses massdiff() to update each record's massdiff column in database.
     This is a candidate feature.
@@ -59,7 +59,6 @@ def update_massdiff(rawtable, featuretable):
     parameters:
     -------------
     -rawtable:		name of raw table 	(string)
-    -featuretable:	name of feature table 	(string)
     """
 
 
@@ -84,8 +83,47 @@ def update_massdiff(rawtable, featuretable):
     for i in range(frame.shape[0]):
         frame['massdiff'][i] = massdiff(frame.loc[i])
 
-    return frame
+    return frame[['eid','massdiff']]
 
+
+
+
+def update_nlFromBrem(rawtable):
+    """
+    This function constructs
+            nlFromBrem float[nnl]
+    which indicates whether the corresponding photon is from Brem effect.
+    This function is useful in extraenergy(), as nlFromBrem is actually the 
+    mother index of photons generated from electrons.
+    """
+    conn = psycopg2.connect(database="darkphoton",user="yunxuanli")
+    cur_nl = conn.cursor()
+    cur_nl.execute("SELECT eid,nele,nnl,eled2idx FROM %s WHERE nnl>0" % rawtable)
+    rows_nl = cur_nl.fetchall()
+    data_mc = np.array(rows_nl, dtype=object)
+    data = {'eid':data_mc[:,0],
+            'nele':data_mc[:,1],
+            'nnl':data_mc[:,2],
+            'eled2idx':data_mc[:,3],
+            'nlfrombrem':Series(data_mc.shape[0]*[np.zeros(1)])}
+
+    frame = DataFrame(data)
+
+    for i in range(frame.shape[0]):
+
+        result = frame.loc[i]
+        nele = result['nele']
+        nnl = result['nnl']
+        
+        brem = np.zeros(nnl) - 1
+
+        for j in range(nele):
+            if(result['eled2idx'][j] != -1):
+                brem[result['eled2idx'][j]] = j
+
+        result['nlfrombrem'] = brem
+
+    return frame[['eid','nlfrombrem']]
 
 
 

@@ -139,7 +139,7 @@ def update_massdiff(rawtable, featuretable):
         cur_nl.execute(SQL,(result['massdiff'].tolist(),result['eid']))
         if(i%1000 == 0):
             print i
-			conn.commit()
+            conn.commit()
     conn.commit()
 
 

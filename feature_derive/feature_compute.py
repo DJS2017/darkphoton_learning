@@ -83,7 +83,7 @@ def update_massdiff(rawtable):
     for i in range(frame.shape[0]):
         frame['massdiff'][i] = massdiff(frame.loc[i])
 
-    return frame[['eid','massdiff']]
+    return frame[['eid','massdiff']].set_index('eid')
 
 
 
@@ -123,7 +123,7 @@ def update_nlFromBrem(rawtable):
 
         result['nlfrombrem'] = brem
 
-    return frame[['eid','nlfrombrem']]
+    return frame[['eid','nlfrombrem']].set_index('eid')
 
 
 

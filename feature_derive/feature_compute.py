@@ -190,10 +190,6 @@ def update_rphoton(rawtable):
         result['rphoton_pz'] = dp_pz
         result['rphoton_e']  = dp_e
 
-    # update to database
-    for i in range(frame.shape[0]):
-        result = frame.loc[i]
-        cur_nl.execute("UPDATE mcevent SET rphoton_px=%s,rphoton_py=%s,rphoton_pz=%s,rphoton_e=%s WHERE eid=%s",(result['rphoton_px'].tolist(),result['rphoton_py'].tolist(),result['rphoton_pz'].tolist(),result['rphoton_e'].tolist(),result['eid']))
 
     return frame[['eid','rphoton_px','rphoton_py','rphoton_pz','rphoton_e']].set_index('eid')
 

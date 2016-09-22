@@ -16,6 +16,7 @@ import csv
 def true_match(rawtable):
     """
     This function aims to do truth-matching for each events.
+    This is identical to labelling data.
 
     parameters:
     -------------
@@ -60,7 +61,7 @@ def true_match(rawtable):
         result['true_matching'] = matching
 
 
-    return frame['eid','true_matching'].set_index('eid')
+    return frame[['eid','true_matching']].set_index('eid')
         
 
 

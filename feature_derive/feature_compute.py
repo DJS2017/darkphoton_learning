@@ -13,6 +13,59 @@ import csv
 
 
 
+def true_match(rawtable):
+    """
+    This function aims to do truth-matching for each events.
+
+    parameters:
+    -------------
+    -rawtable:      name of raw table   (string)
+    """
+    
+
+    # connect to database, and obtain data
+    conn = psycopg2.connect(database="darkphoton",user="yunxuanli")
+    cur_nl = conn.cursor()
+
+    cur_nl.execute("SELECT eid,nups,upsd1idx,upsd2idx,upsd3idx,v0MCIdx,v0d1Lund,mcLund,dauIdx FROM %s WHERE nups>0" % rawtable)
+    rows_nl = cur_nl.fetchall()
+    data_mc = np.array(rows_nl, dtype=object)
+    data = {'eid':data_mc[:,0],
+            'nups':data_mc[:,1],
+            'upsd1idx':data_mc[:,2],
+            'upsd2idx':data_mc[:,3],
+            'upsd3idx':data_mc[:,4],
+            'v0MCIdx':data_mc[:,5],
+            'v0d1Lund':data_mc[:,6],
+            'mcLund':data_mc[:,7],
+            'dauIdx':data_mc[:,8],
+            'true_matching':Series(data_mc.shape[0]*[np.zeros(1)])}
+    frame = DataFrame(data)
+
+    for event_id in range(frame.shape[0]):
+        result = frame.iloc[event_id]
+        nups = result.nups
+        matching = np.zeros(nups)	#initialization true_matching list for a given event
+
+        for candidate_id in range(nups):
+            iv1 = result.upsd1idx[candidate_id]
+            iv2 = result.upsd2idx[candidate_id]
+            iv3 = result.upsd3idx[candidate_id]
+            isTrueV1 = (result.v0MCIdx[iv1]>-1) and abs(result.v0d1Lund[iv1])==abs(result.mcLund[result.dauIdx[result.v0MCIdx[iv1]]])
+            isTrueV2 = (result.v0MCIdx[iv2]>-1) and abs(result.v0d1Lund[iv2])==abs(result.mcLund[result.dauIdx[result.v0MCIdx[iv2]]])
+            isTrueV3 = (result.v0MCIdx[iv3]>-1) and abs(result.v0d1Lund[iv3])==abs(result.mcLund[result.dauIdx[result.v0MCIdx[iv3]]])
+            isTrueUps = isTrueV1 and isTrueV2 and isTrueV3
+            matching[candidate_id] = isTrueUps
+
+        result['true_matching'] = matching
+
+
+    return frame['eid','true_matching'].set_index('eid')
+        
+
+
+
+
 def massdiff(record):
     """
     # This function aims to calculate each candidate's massdiff given a collection of candidates.
@@ -55,6 +108,8 @@ def massdiff(record):
 
 
 
+
+
 def update_massdiff(rawtable):
     """
     This function uses massdiff() to update each record's massdiff column in database.
@@ -88,6 +143,8 @@ def update_massdiff(rawtable):
         frame['massdiff'][i] = massdiff(frame.loc[i])
 
     return frame[['eid','massdiff']].set_index('eid')
+
+
 
 
 
@@ -193,3 +250,41 @@ def update_rphoton(rawtable):
 
     return frame[['eid','rphoton_px','rphoton_py','rphoton_pz','rphoton_e']].set_index('eid')
 
+
+
+
+
+
+def update_recoilmass(rawtable):
+    """
+    This function aims to preprocess recoilmass, which is the mass of reconstructed photon
+    These two are all candidate features.
+    """
+    conn = psycopg2.connect(database="darkphoton",user="yunxuanli")
+    cur_nl = conn.cursor()
+    cur_nl.execute("SELECT eid,nups,rphoton_px,rphoton_py,rphoton_pz,rphoton_e FROM %s WHERE nups>0" % rawtable)
+    rows_nl = cur_nl.fetchall()
+    data_mc = np.array(rows_nl, dtype=object)
+    data = {'eid':data_mc[:,0],
+            'nups':data_mc[:,1],
+            'rphoton_px':data_mc[:,2],
+            'rphoton_py':data_mc[:,3],
+            'rphoton_pz':data_mc[:,4],
+            'rphoton_e':data_mc[:,5],
+            'recoilmass':Series(data_mc.shape[0]*[np.zeros(1)])}
+    frame = DataFrame(data)
+
+    # calculate recoilmass
+    for i in range(frame.shape[0]):
+        
+        result = frame.loc[i]
+        n = result['nups']
+        recoilmass = np.zeros(n)
+
+        for j in range(n):
+            recoilmass[j] = result['rphoton_e'][j]**2 - (result['rphoton_px'][j]**2 + result['rphoton_py'][j]**2 + result['rphoton_pz'][j]**2)
+        
+        result['recoilmass'] = recoilmass
+
+
+    return frame[['eid','recoilmass']].set_index('eid')

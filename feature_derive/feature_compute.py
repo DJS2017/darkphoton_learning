@@ -141,7 +141,7 @@ def update_massdiff(rawtable):
 
     # deal with massdiff
     for i in range(frame.shape[0]):
-        frame['massdiff'][i] = massdiff(frame.loc[i])
+        frame.iloc[i]['massdiff'] = massdiff(frame.iloc[i])
 
     return frame[['eid','massdiff']].set_index('eid')
 
@@ -173,7 +173,7 @@ def update_nlFromBrem(rawtable):
 
     for i in range(frame.shape[0]):
 
-        result = frame.loc[i]
+        result = frame.iloc[i]
         nele = result['nele']
         nnl = result['nnl']
         
@@ -220,7 +220,7 @@ def update_rphoton(rawtable):
 
     for i in range(frame.shape[0]):
 
-        result = frame.loc[i]
+        result = frame.iloc[i]
         n = result['nups']
 
         dp_px = np.zeros(n)
@@ -256,30 +256,25 @@ def update_rphoton(rawtable):
 
 
 
-def update_recoilmass(rawtable):
+def update_recoilmass(rphoton):
     """
     This function aims to preprocess recoilmass, which is the mass of reconstructed photon
     These two are all candidate features.
+
+    parameters:
+    -------------
+    rphoton: path of hdf file in which rphoton stores.      (string)
+
     """
-    conn = psycopg2.connect(database="darkphoton",user="yunxuanli")
-    cur_nl = conn.cursor()
-    cur_nl.execute("SELECT eid,nups,rphoton_px,rphoton_py,rphoton_pz,rphoton_e FROM %s WHERE nups>0" % rawtable)
-    rows_nl = cur_nl.fetchall()
-    data_mc = np.array(rows_nl, dtype=object)
-    data = {'eid':data_mc[:,0],
-            'nups':data_mc[:,1],
-            'rphoton_px':data_mc[:,2],
-            'rphoton_py':data_mc[:,3],
-            'rphoton_pz':data_mc[:,4],
-            'rphoton_e':data_mc[:,5],
-            'recoilmass':Series(data_mc.shape[0]*[np.zeros(1)])}
-    frame = DataFrame(data)
+    
+    #cur_nl.execute("SELECT eid,nups,rphoton_px,rphoton_py,rphoton_pz,rphoton_e FROM %s WHERE nups>0" % rawtable)
+    frame = pd.read_hdf(rphoton,'rphoton')
 
     # calculate recoilmass
     for i in range(frame.shape[0]):
         
-        result = frame.loc[i]
-        n = result['nups']
+        result = frame.iloc[i]
+        n = len(result['rphoton_px'])
         recoilmass = np.zeros(n)
 
         for j in range(n):

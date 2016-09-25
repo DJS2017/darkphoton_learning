@@ -288,6 +288,8 @@ def update_recoilmass(rphoton):
 
 
 
+
+
 def update_rphoton_costh(rphoton):
     """
     This function deals with reconstructed photon's costh as a feature
@@ -339,7 +341,7 @@ def update_bestphoton(rphoton_path, rphoton_costh_path, nlfrombrem_path, rawtabl
     # read raw data from postgresql database.
     conn = psycopg2.connect(database="darkphoton",user="yunxuanli")
     cur_nl = conn.cursor()
-    cur_nl.execute("SELECT eid,nups,nnl,nlp3,nlcosth,nlphi FROM mcevent WHERE nups>0")
+    cur_nl.execute("SELECT eid,nups,nnl,nlp3,nlcosth,nlphi FROM %s WHERE nups>0" % rawtable)
     rows_nl = cur_nl.fetchall()
     data_mc = np.array(rows_nl, dtype=object)
     data = {'eid':data_mc[:,0],
@@ -411,4 +413,49 @@ def update_bestphoton(rphoton_path, rphoton_costh_path, nlfrombrem_path, rawtabl
     
     return frame[['eid','bestphoton']].set_index('eid')
 
+
+
+
+def update_extraenergy(nlfrombrem_path, bestphoton_path, rawtable):
+    """
+    extra energy is an event feature.
+    This function uses result of bestphoton to calculate extra energy for each event.
+    """
+
+    # read from hdf files.
+    nlfrombrem_hdf = pd.read_hdf(nlfrombrem_path,'nlfrombrem')
+    bestphoton_hdf = pd.read_hdf(bestphoton_path,'bestphoton')
+
+
+    # read from psql database.
+    conn = psycopg2.connect(database="darkphoton",user="yunxuanli")
+    cur_nl = conn.cursor()
+    cur_nl.execute("SELECT eid,nnl,nlp3 FROM %s WHERE nups>0" % rawtable)
+    rows_nl = cur_nl.fetchall()
+    data_mc = np.array(rows_nl, dtype=object)
+    data = {'eid':data_mc[:,0],
+            'nnl':data_mc[:,1],
+            'nlp3':data_mc[:,2],
+            'extraenergy':0}
+    frame = DataFrame(data)
+
+    for i in range(frame.shape[0]):
+        #result = frame.loc[i]
+        #nnl = result['nnl']
+        nnl = frame.iloc[i]['nnl']
+        eid = frame.iloc[i]['eid']
+
+        if(nnl == 0):
+            continue
+        for j in range(nnl):
+            if(nlfrombrem_hdf.loc[eid]['nlfrombrem'][j] > -1): 
+                continue
+            if(bestphoton_hdf.loc[eid]['bestphoton'][j] != 0):
+                continue
+            extraenergy_update = frame.iloc[i,'extraenergy'] + frame.iloc[i,'nlp3'][j]
+            frame.iloc[i,'extraenergy'] = extraenergy_update
+
+    conn.close()
     
+    return frame[['eid','extraenergy']].set_index('eid')
+

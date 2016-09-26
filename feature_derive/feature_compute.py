@@ -284,7 +284,7 @@ def update_recoilmass(rphoton):
         result['recoilmass'] = recoilmass
 
 
-    return frame[['eid','recoilmass']].set_index('eid')
+    return frame[['recoilmass']]
 
 
 
@@ -318,7 +318,7 @@ def update_rphoton_costh(rphoton):
         result['rphoton_costh'] = rphoton_costh
 
 
-    return frame[['eid','rphoton_costh']].set_index('eid')
+    return frame[['rphoton_costh']]
 
 
 

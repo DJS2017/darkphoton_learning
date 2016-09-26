@@ -346,11 +346,13 @@ def update_v0mass_avg(rawtable):
 
         v0mass_avg = np.zeros(nups)
         for j in range(nups):
-            v0mass_avg[j] = (result['v0mass'][result['upsd1idx']] + result['v0mass'][result['upsd2idx']] + result['v0mass'][result['upsd3idx']]) *1.0 / 3
+            v0mass_avg[j] = (result['v0mass'][result['upsd1idx'][j]] + result['v0mass'][result['upsd2idx'][j]] + result['v0mass'][result['upsd3idx'][j]]) *1.0 / 3
 
         result['v0mass_avg'] = v0mass_avg
 
     return frame[['eid','v0mass_avg']].set_index('eid')
+
+
 
 
 # haven't tested from here to last line:

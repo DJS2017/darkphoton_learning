@@ -355,6 +355,23 @@ def update_v0mass_avg(rawtable):
 
 
 
+def update_upsmass(rawtable):
+    conn = psycopg2.connect(database="darkphoton",user="yunxuanli")
+    cur_nl = conn.cursor()
+
+    cur_nl.execute("SELECT eid,upsmass FROM %s WHERE nups>0" % rawtable)
+    rows_nl = cur_nl.fetchall()
+    data_mc = np.array(rows_nl, dtype=object)
+    data = {'eid':data_mc[:,0],
+            'upsmass':data_mc[:,1]}
+    frame = DataFrame(data)
+
+    return frame[['eid','upsmass']].set_index('eid')
+
+
+
+
+
 # haven't tested from here to last line:
 
 

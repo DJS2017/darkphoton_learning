@@ -269,6 +269,7 @@ def update_recoilmass(rphoton):
     
     #cur_nl.execute("SELECT eid,nups,rphoton_px,rphoton_py,rphoton_pz,rphoton_e FROM %s WHERE nups>0" % rawtable)
     frame = pd.read_hdf(rphoton,'rphoton')
+    frame['recoilmass'] = pd.Series(frame.shape[0]*[np.zeros(3)],index=frame.index)
 
     # calculate recoilmass
     for i in range(frame.shape[0]):
@@ -302,6 +303,7 @@ def update_rphoton_costh(rphoton):
     
     #cur_nl.execute("SELECT eid,nups,rphoton_px,rphoton_py,rphoton_pz,rphoton_e FROM mcevent WHERE nups>0")
     frame = pd.read_hdf(rphoton,'rphoton')
+    frame['rphoton_costh'] = pd.Series(frame.shape[0]*[np.zeros(3)],index=frame.index)
 
     # calculate rphoton_costh
     for i in range(frame.shape[0]):

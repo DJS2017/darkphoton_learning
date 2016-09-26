@@ -324,6 +324,36 @@ def update_rphoton_costh(rphoton):
 
 
 
+def update_v0mass_avg(rawtable):
+    conn = psycopg2.connect(database="darkphoton",user="yunxuanli")
+    cur_nl = conn.cursor()
+
+    cur_nl.execute("SELECT eid,nups,upsd1idx,upsd2idx,upsd3idx,v0mass FROM %s WHERE nups>0" % rawtable)
+    rows_nl = cur_nl.fetchall()
+    data_mc = np.array(rows_nl, dtype=object)
+    data = {'eid':data_mc[:,0],
+            'nups':data_mc[:,1],
+            'upsd1idx':data_mc[:,2],
+            'upsd2idx':data_mc[:,3],
+            'upsd3idx':data_mc[:,4],
+            'v0mass':data_mc[:,5],
+            'v0mass_avg':Series(data_mc.shape[0]*[np.zeros(1)])}
+    frame = DataFrame(data)
+
+    for event_id in frame.index:
+        result = frame.loc[event_id]
+        nups = result['nups']
+
+        v0mass_avg = np.zeros(nups)
+        for j in range(nups):
+            v0mass_avg[j] = (result['v0mass'][result['upsd1idx']] + result['v0mass'][result['upsd2idx']] + result['v0mass'][result['upsd3idx']]) *1.0 / 3
+
+        result['v0mass_avg'] = v0mass_avg
+
+    return frame[['eid','v0mass_avg']].set_index('eid')
+
+
+# haven't tested from here to last line:
 
 
 

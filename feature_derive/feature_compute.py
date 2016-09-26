@@ -43,8 +43,8 @@ def true_match(rawtable):
             'true_matching':Series(data_mc.shape[0]*[np.zeros(1)])}
     frame = DataFrame(data)
 
-    for event_id in range(frame.shape[0]):
-        result = frame.iloc[event_id]
+    for event_id in frame.index:
+        result = frame.loc[event_id]
         nups = result.nups
         matching = np.zeros(nups)	#initialization true_matching list for a given event
 
@@ -140,8 +140,8 @@ def update_massdiff(rawtable):
 
 
     # deal with massdiff
-    for i in range(frame.shape[0]):
-        frame.iloc[i]['massdiff'] = massdiff(frame.iloc[i])
+    for event_id in frame.index:
+        frame.loc[event_id]['massdiff'] = massdiff(frame.loc[event_id])
 
     return frame[['eid','massdiff']].set_index('eid')
 
@@ -171,9 +171,9 @@ def update_nlFromBrem(rawtable):
 
     frame = DataFrame(data)
 
-    for i in range(frame.shape[0]):
+    for event_id in frame.index:
 
-        result = frame.iloc[i]
+        result = frame.loc[event_id]
         nele = result['nele']
         nnl = result['nnl']
         
@@ -218,9 +218,9 @@ def update_rphoton(rawtable):
             'rphoton_e':Series(data_mc.shape[0]*[np.zeros(1)])}
     frame = DataFrame(data)
 
-    for i in range(frame.shape[0]):
+    for event_id in frame.index:
 
-        result = frame.iloc[i]
+        result = frame.loc[event_id]
         n = result['nups']
 
         dp_px = np.zeros(n)
@@ -272,9 +272,9 @@ def update_recoilmass(rphoton):
     frame['recoilmass'] = pd.Series(frame.shape[0]*[np.zeros(3)],index=frame.index)
 
     # calculate recoilmass
-    for i in range(frame.shape[0]):
+    for event_id in frame.index:
         
-        result = frame.iloc[i]
+        result = frame.loc[event_id]
         n = len(result['rphoton_px'])
         recoilmass = np.zeros(n)
 
@@ -306,8 +306,8 @@ def update_rphoton_costh(rphoton):
     frame['rphoton_costh'] = pd.Series(frame.shape[0]*[np.zeros(3)],index=frame.index)
 
     # calculate rphoton_costh
-    for i in range(frame.shape[0]):
-        result = frame.iloc[i]
+    for event_id in frame.index:
+        result = frame.loc[event_id]
         n = len(result['rphoton_px'])
         rphoton_costh = np.zeros(n)
 
@@ -357,9 +357,9 @@ def update_bestphoton(rphoton_path, rphoton_costh_path, nlfrombrem_path, rawtabl
 
 
     # calculate bestphoton
-    for i in range(frame.shape[0]):
+    for event_id in frame.index:
        
-        result = frame.iloc[i]
+        result = frame.loc[event_id]
         eid = result['eid']
         nups = result['nups']
         nnl = result['nnl']
@@ -441,11 +441,11 @@ def update_extraenergy(nlfrombrem_path, bestphoton_path, rawtable):
             'extraenergy':0}
     frame = DataFrame(data)
 
-    for i in range(frame.shape[0]):
+    for event_id in frame.index:
         #result = frame.loc[i]
         #nnl = result['nnl']
-        nnl = frame.iloc[i]['nnl']
-        eid = frame.iloc[i]['eid']
+        nnl = frame.loc[event_id]['nnl']
+        eid = frame.loc[event_id]['eid']
 
         if(nnl == 0):
             continue
@@ -454,8 +454,8 @@ def update_extraenergy(nlfrombrem_path, bestphoton_path, rawtable):
                 continue
             if(bestphoton_hdf.loc[eid]['bestphoton'][j] != 0):
                 continue
-            extraenergy_update = frame.iloc[i,'extraenergy'] + frame.iloc[i,'nlp3'][j]
-            frame.iloc[i,'extraenergy'] = extraenergy_update
+            extraenergy_update = frame.iloc[event_id,'extraenergy'] + frame.iloc[event_id,'nlp3'][j]
+            frame.loc[event_id,'extraenergy'] = extraenergy_update
 
     conn.close()
     

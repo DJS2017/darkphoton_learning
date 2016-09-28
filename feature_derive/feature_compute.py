@@ -419,7 +419,7 @@ def update_bestphoton(rphoton_path, rphoton_costh_path, nlfrombrem_path, rawtabl
         rphoton_e_list = rphoton_hdf.loc[eid]['rphoton_e']
         rphoton_costh_list = rphoton_costh_hdf.loc[eid]['rphoton_costh']
 
-        bestphoton = np.zeros(nnl)
+        bestphoton = np.zeros(nups)-2   # default value is -2, which means this hasn't been calculated
 
         for j in range(nups):
             
@@ -434,6 +434,7 @@ def update_bestphoton(rphoton_path, rphoton_costh_path, nlfrombrem_path, rawtabl
             rphoton_costh = rphoton_costh_list[j]
 
             if(rphoton_costh < -0.8 or rphoton_costh > 0.96):
+                bestphoton[j] = -1      # -1 means there are no bestphoton after calculation.
                 break
 
             nlfrombrem_list = nlfrombrem_hdf.loc[eid]['nlfrombrem']
@@ -455,8 +456,12 @@ def update_bestphoton(rphoton_path, rphoton_costh_path, nlfrombrem_path, rawtabl
                 deltaE = abs(rphoton_e - nl_p3)
 
                 if(angle < 0.1 and deltaE/nl_p3 < 0.1):
-                    bestphoton[k] = 1
+                    bestphoton[j] = k
                     break
+
+            if(bestphoton[j] == -2):
+                bestphoton[j] = -1
+
 
         result['bestphoton'] = bestphoton
 

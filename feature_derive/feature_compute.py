@@ -435,7 +435,7 @@ def update_bestphoton(rphoton_path, rphoton_costh_path, nlfrombrem_path, rawtabl
 
             if(rphoton_costh < -0.8 or rphoton_costh > 0.96):
                 bestphoton[j] = -1      # -1 means there are no bestphoton after calculation.
-                break
+                continue
 
             nlfrombrem_list = nlfrombrem_hdf.loc[eid]['nlfrombrem']
             for k in range(nnl):

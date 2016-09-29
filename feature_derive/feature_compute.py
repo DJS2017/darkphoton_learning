@@ -380,7 +380,7 @@ def update_bestphoton(rphoton_path, rphoton_costh_path, nlfrombrem_path, rawtabl
     """
     This function aims to calculate best matched photon with reconstructed photon.
     It is useful for computing event features.
-            bestphoton real[nnl]
+            bestphoton real[nups]
     """
 
     # read data from hdf files.
@@ -476,7 +476,6 @@ def update_bestphoton(rphoton_path, rphoton_costh_path, nlfrombrem_path, rawtabl
 
 def update_extraenergy(nlfrombrem_path, bestphoton_path, rawtable):
     """
-    extra energy is an event feature.
     This function uses result of bestphoton to calculate extra energy for each event.
     """
 
@@ -492,8 +491,9 @@ def update_extraenergy(nlfrombrem_path, bestphoton_path, rawtable):
     rows_nl = cur_nl.fetchall()
     data_mc = np.array(rows_nl, dtype=object)
     data = {'eid':data_mc[:,0],
-            'nnl':data_mc[:,1],
-            'nlp3':data_mc[:,2],
+            'nups':data_mc[:,1],
+            'nnl':data_mc[:,2],
+            'nlp3':data_mc[:,3],
             'extraenergy':0}
     frame = DataFrame(data)
 
@@ -502,16 +502,23 @@ def update_extraenergy(nlfrombrem_path, bestphoton_path, rawtable):
         #nnl = result['nnl']
         nnl = frame.loc[event_id]['nnl']
         eid = frame.loc[event_id]['eid']
+        nups = frame.loc[event_id]['nups']
 
-        if(nnl == 0):
-            continue
-        for j in range(nnl):
-            if(nlfrombrem_hdf.loc[eid]['nlfrombrem'][j] > -1): 
+        bestphoton_id = bestphoton_hdf.loc[eid]['bestphoton']   # length is nups
+
+        for i in range(nups):
+
+            if(nnl == 0):
                 continue
-            if(bestphoton_hdf.loc[eid]['bestphoton'][j] != 0):
-                continue
-            extraenergy_update = frame.iloc[event_id,'extraenergy'] + frame.iloc[event_id,'nlp3'][j]
-            frame.loc[event_id,'extraenergy'] = extraenergy_update
+
+            for j in range(nnl):
+                if(nlfrombrem_hdf.loc[eid]['nlfrombrem'][j] > -1): 
+                    continue
+
+                if(bestphoton_id[i] == j):
+                    continue
+                extraenergy_update = frame.iloc[event_id,'extraenergy'] + frame.iloc[event_id,'nlp3'][j]
+                frame.loc[event_id,'extraenergy'] = extraenergy_update
 
     conn.close()
     

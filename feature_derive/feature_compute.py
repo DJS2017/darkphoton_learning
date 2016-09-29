@@ -421,9 +421,11 @@ def update_bestphoton(rphoton_path, rphoton_costh_path, nlfrombrem_path, rawtabl
 
         bestphoton = np.zeros(nups)-2   # default value is -2, which means this hasn't been calculated
 
+        
         for j in range(nups):
             
             if(nnl == 0):
+                bestphoton = bestphoton + 1
                 break
 
             # reconstructed photon should be in calorimeter

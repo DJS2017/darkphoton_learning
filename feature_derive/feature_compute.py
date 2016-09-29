@@ -517,7 +517,7 @@ def update_extraenergy(nlfrombrem_path, bestphoton_path, rawtable):
 
                 if(bestphoton_id[i] == j):
                     continue
-                extraenergy_update = frame.iloc[event_id,'extraenergy'] + frame.iloc[event_id,'nlp3'][j]
+                extraenergy_update = frame.loc[event_id,'extraenergy'] + frame.loc[event_id,'nlp3'][j]
                 frame.loc[event_id,'extraenergy'] = extraenergy_update
 
     conn.close()

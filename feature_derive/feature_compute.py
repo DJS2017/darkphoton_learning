@@ -64,13 +64,13 @@ def true_match(rawtable):
             matching[candidate_id] = isTrueUps
 
         frame.loc[event_id,'true_matching'] = matching
-        frame.loc[event_id,'upsmcmass'] = result['mcmass'][0:1]
-        frame.loc[event_id,'v0mcmass'] = v0mcmass
+        #frame.loc[event_id,'upsmcmass'] = result['mcmass'][0:1]
+        #frame.loc[event_id,'v0mcmass'] = v0mcmass
         #result['true_matching'] = matching
         #result['upsmcmass'] = result['mcmass'][0]
         #result['v0mcmass'] = v0mcmass
 
-    return frame[['eid','true_matching','upsmcidx','upsmcmass','v0mcmass']].set_index('eid')
+    return frame[['eid','true_matching']].set_index('eid')
         
 
 

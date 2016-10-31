@@ -373,13 +373,14 @@ def update_upsmass(rawtable):
     conn = psycopg2.connect(database="darkphoton",user="yunxuanli")
     cur_nl = conn.cursor()
 
-    cur_nl.execute("SELECT eid,upsmass,mcmass,upsmcidx FROM %s WHERE nups>0" % rawtable)
+    cur_nl.execute("SELECT eid,nups,upsmass,mcmass,upsmcidx FROM %s WHERE nups>0" % rawtable)
     rows_nl = cur_nl.fetchall()
     data_mc = np.array(rows_nl, dtype=object)
     data = {'eid':data_mc[:,0],
-            'upsmass':data_mc[:,1],
-            'mcmass':data_mc[:,2],
-            'upsmcidx':data_mc[:,3],
+            'nups':data_mc[:,1],
+            'upsmass':data_mc[:,2],
+            'mcmass':data_mc[:,3],
+            'upsmcidx':data_mc[:,4],
             'upsmcmass':Series(data_mc.shape[0]*[np.zeros(1)])}
     frame = DataFrame(data)
 

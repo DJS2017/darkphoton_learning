@@ -63,10 +63,10 @@ def true_match(rawtable):
             isTrueUps = isTrueV1 and isTrueV2 and isTrueV3
             matching[candidate_id] = isTrueUps
 
-        frame.loc[event_id,'true_matching'] = matching
+        #frame.loc[event_id,'true_matching'] = matching
         #frame.loc[event_id,'upsmcmass'] = result['mcmass'][0:1]
         #frame.loc[event_id,'v0mcmass'] = v0mcmass
-        #result['true_matching'] = matching
+        result['true_matching'] = matching
         #result['upsmcmass'] = result['mcmass'][0]
         #result['v0mcmass'] = v0mcmass
 

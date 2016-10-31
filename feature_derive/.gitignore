@@ -1,3 +1,6 @@
 *.hdf
 *.ipynb
 *.pyc
+*.DS_Store
+*.png
+*.dot

@@ -28,7 +28,7 @@ def true_match(rawtable):
     conn = psycopg2.connect(database="darkphoton",user="yunxuanli")
     cur_nl = conn.cursor()
 
-    cur_nl.execute("SELECT eid,nups,upsd1idx,upsd2idx,upsd3idx,v0MCIdx,v0d1Lund,mcLund,dauIdx FROM %s WHERE nups>0" % rawtable)
+    cur_nl.execute("SELECT eid,nups,upsd1idx,upsd2idx,upsd3idx,v0MCIdx,v0d1Lund,mcLund,dauIdx,upsmcidx FROM %s WHERE nups>0" % rawtable)
     rows_nl = cur_nl.fetchall()
     data_mc = np.array(rows_nl, dtype=object)
     data = {'eid':data_mc[:,0],
@@ -40,6 +40,7 @@ def true_match(rawtable):
             'v0d1Lund':data_mc[:,6],
             'mcLund':data_mc[:,7],
             'dauIdx':data_mc[:,8],
+            'upsmcidx':data_mc[:,9],
             'true_matching':Series(data_mc.shape[0]*[np.zeros(1)])}
     frame = DataFrame(data)
 
@@ -61,7 +62,7 @@ def true_match(rawtable):
         result['true_matching'] = matching
 
 
-    return frame[['eid','true_matching']].set_index('eid')
+    return frame[['eid','true_matching','upsmcidx']].set_index('eid')
         
 
 
@@ -126,7 +127,7 @@ def update_massdiff(rawtable):
     conn = psycopg2.connect(database="darkphoton",user="yunxuanli")
     cur_nl = conn.cursor()
 
-    cur_nl.execute("SELECT eid,nups,upsd1idx,upsd2idx,upsd3idx,v0mass FROM %s WHERE nups>0" % rawtable)
+    cur_nl.execute("SELECT eid,nups,upsd1idx,upsd2idx,upsd3idx,v0mass,upsmcidx FROM %s WHERE nups>0" % rawtable)
     rows_nl = cur_nl.fetchall()
     data_mc = np.array(rows_nl, dtype=object)
     data = {'eid':data_mc[:,0],
@@ -135,6 +136,7 @@ def update_massdiff(rawtable):
             'upsd2idx':data_mc[:,3],
             'upsd3idx':data_mc[:,4],
             'v0mass':data_mc[:,5],
+            'upsmcidx':data_mc[:,6],
             'massdiff':Series(data_mc.shape[0]*[np.zeros(1)])}
     frame = DataFrame(data)
 
@@ -143,7 +145,7 @@ def update_massdiff(rawtable):
     for event_id in frame.index:
         frame.loc[event_id]['massdiff'] = massdiff(frame.loc[event_id])
 
-    return frame[['eid','massdiff']].set_index('eid')
+    return frame[['eid','massdiff','upsmcidx']].set_index('eid')
 
 
 

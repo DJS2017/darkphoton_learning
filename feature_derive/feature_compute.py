@@ -28,7 +28,7 @@ def true_match(rawtable):
     conn = psycopg2.connect(database="darkphoton",user="yunxuanli")
     cur_nl = conn.cursor()
 
-    cur_nl.execute("SELECT eid,nups,upsd1idx,upsd2idx,upsd3idx,v0MCIdx,v0d1Lund,mcLund,dauIdx,upsmcidx,mcmass,mclund FROM %s WHERE nups>0" % rawtable)
+    cur_nl.execute("SELECT eid,nups,upsd1idx,upsd2idx,upsd3idx,v0MCIdx,v0d1Lund,mcLund,dauIdx,upsmcidx,mcmass FROM %s WHERE nups>0" % rawtable)
     rows_nl = cur_nl.fetchall()
     data_mc = np.array(rows_nl, dtype=object)
     data = {'eid':data_mc[:,0],
@@ -42,8 +42,7 @@ def true_match(rawtable):
             'dauIdx':data_mc[:,8],
             'upsmcidx':data_mc[:,9],
             'mcmass':data_mc[:,10],
-            'mclund':data_mc[:,11],
-            'upsmcmass':Series(np.zeros(data_mc.shape[0])),
+            'upsmcmass':Series(data_mc.shape[0]*[np.zeros(1)]),
             'v0mcmass':Series(data_mc.shape[0]*[np.zeros(1)]),
             'true_matching':Series(data_mc.shape[0]*[np.zeros(1)])}
     frame = DataFrame(data)
@@ -51,7 +50,7 @@ def true_match(rawtable):
     count = 0
     for event_id in frame.index:
         count = count + 1
-        if(count % 10000 == 0):
+        if(count % 1000 == 0):
             print count
         
         result = frame.loc[event_id]
@@ -73,9 +72,12 @@ def true_match(rawtable):
         v0mcmass[1] = result['mcmass'][2]
         v0mcmass[2] = result['mcmass'][3]
 
-        result['true_matching'] = matching
-        result['upsmcmass'] = result['mcmass'][0]
-        result['v0mcmass'] = v0mcmass
+        frame.loc[event_id,'true_matching'] = matching
+        frame.loc[event_id,'upsmcmass'] = result['mcmass'][0:1]
+        frame.loc[event_id,'v0mcmass'] = v0mcmass
+        #result['true_matching'] = matching
+        #result['upsmcmass'] = result['mcmass'][0]
+        #result['v0mcmass'] = v0mcmass
 
 
 

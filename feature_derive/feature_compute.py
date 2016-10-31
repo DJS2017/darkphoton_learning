@@ -48,7 +48,12 @@ def true_match(rawtable):
             'true_matching':Series(data_mc.shape[0]*[np.zeros(1)])}
     frame = DataFrame(data)
 
+    count = 0
     for event_id in frame.index:
+        count = count + 1
+        if(count % 10000 == 0):
+            print count
+        
         result = frame.loc[event_id]
         nups = result.nups
         matching = np.zeros(nups)	#initialization true_matching list for a given event

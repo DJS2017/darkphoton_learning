@@ -28,7 +28,7 @@ def true_match(rawtable):
     conn = psycopg2.connect(database="darkphoton",user="yunxuanli")
     cur_nl = conn.cursor()
 
-    cur_nl.execute("SELECT eid,nups,upsd1idx,upsd2idx,upsd3idx,v0MCIdx,v0d1Lund,mcLund,dauIdx,upsmcidx,mcmass FROM %s WHERE nups>0" % rawtable)
+    cur_nl.execute("SELECT eid,nups,upsd1idx,upsd2idx,upsd3idx,v0MCIdx,v0d1Lund,mcLund,dauIdx FROM %s WHERE nups>0" % rawtable)
     rows_nl = cur_nl.fetchall()
     data_mc = np.array(rows_nl, dtype=object)
     data = {'eid':data_mc[:,0],
@@ -40,10 +40,6 @@ def true_match(rawtable):
             'v0d1Lund':data_mc[:,6],
             'mcLund':data_mc[:,7],
             'dauIdx':data_mc[:,8],
-            'upsmcidx':data_mc[:,9],
-            'mcmass':data_mc[:,10],
-            'upsmcmass':Series(data_mc.shape[0]*[np.zeros(1)]),
-            'v0mcmass':Series(data_mc.shape[0]*[np.zeros(1)]),
             'true_matching':Series(data_mc.shape[0]*[np.zeros(1)])}
     frame = DataFrame(data)
 
@@ -67,11 +63,6 @@ def true_match(rawtable):
             isTrueUps = isTrueV1 and isTrueV2 and isTrueV3
             matching[candidate_id] = isTrueUps
 
-        v0mcmass = np.zeros(3)
-        v0mcmass[0] = result['mcmass'][1]
-        v0mcmass[1] = result['mcmass'][2]
-        v0mcmass[2] = result['mcmass'][3]
-
         frame.loc[event_id,'true_matching'] = matching
         frame.loc[event_id,'upsmcmass'] = result['mcmass'][0:1]
         frame.loc[event_id,'v0mcmass'] = v0mcmass
@@ -79,11 +70,47 @@ def true_match(rawtable):
         #result['upsmcmass'] = result['mcmass'][0]
         #result['v0mcmass'] = v0mcmass
 
-
-
     return frame[['eid','true_matching','upsmcidx','upsmcmass','v0mcmass']].set_index('eid')
         
 
+
+def update_mcmass(rawtable):
+    """
+    This function aims to calculate mcmass for each event.
+    This is identical to parameterize data.
+
+    parameters:
+    -------------
+    -rawtable:      name of raw table   (string)
+    """
+    
+
+    # connect to database, and obtain data
+    conn = psycopg2.connect(database="darkphoton",user="yunxuanli")
+    cur_nl = conn.cursor()
+
+    cur_nl.execute("SELECT eid,nups,upsmcidx,mcmass FROM %s WHERE nups>0" % rawtable)
+    rows_nl = cur_nl.fetchall()
+    data_mc = np.array(rows_nl, dtype=object)
+    data = {'eid':data_mc[:,0],
+            'nups':data_mc[:,1],
+            'upsmcidx':data_mc[:,2],
+            'mcmass':data_mc[:,3],
+            'upsmcmass':Series(np.zeros(data_mc.shape[0])),
+            'v0mcmass':Series(data_mc.shape[0]*[np.zeros(3)])}
+    frame = DataFrame(data)
+
+    for event_id in frame.index:
+        result = frame.loc[event_id]
+
+        frame.loc[event_id,'upsmcmass'] = result['mcmass'][0]
+
+        v0mcmass[0] = result['mcmass'][1]
+        v0mcmass[1] = result['mcmass'][2]
+        v0mcmass[2] = result['mcmass'][3]
+        frame.loc[event_id,'v0mcmass'] = v0mcmass
+
+    return frame[['eid','nups','upsmcidx','upsmcmass','v0mcmass']].set_index('eid')
 
 
 

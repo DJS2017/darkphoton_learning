@@ -28,7 +28,7 @@ def true_match(rawtable):
     conn = psycopg2.connect(database="darkphoton",user="yunxuanli")
     cur_nl = conn.cursor()
 
-    cur_nl.execute("SELECT eid,nups,upsd1idx,upsd2idx,upsd3idx,v0MCIdx,v0d1Lund,mcLund,dauIdx,upsmcidx FROM %s WHERE nups>0" % rawtable)
+    cur_nl.execute("SELECT eid,nups,upsd1idx,upsd2idx,upsd3idx,v0MCIdx,v0d1Lund,mcLund,dauIdx,upsmcidx,mcmass,mclund FROM %s WHERE nups>0" % rawtable)
     rows_nl = cur_nl.fetchall()
     data_mc = np.array(rows_nl, dtype=object)
     data = {'eid':data_mc[:,0],
@@ -41,6 +41,10 @@ def true_match(rawtable):
             'mcLund':data_mc[:,7],
             'dauIdx':data_mc[:,8],
             'upsmcidx':data_mc[:,9],
+            'mcmass':data_mc[:,10],
+            'mclund':data_mc[:,11],
+            'upsmcmass':Series(np.zeros(data_mc.shape[0])),
+            'v0mcmass':Series(data_mc.shape[0]*[np.zeros(1)]),
             'true_matching':Series(data_mc.shape[0]*[np.zeros(1)])}
     frame = DataFrame(data)
 
@@ -59,10 +63,18 @@ def true_match(rawtable):
             isTrueUps = isTrueV1 and isTrueV2 and isTrueV3
             matching[candidate_id] = isTrueUps
 
+        v0mcmass = np.zeros(3)
+        v0mcmass[0] = result['mcmass'][1]
+        v0mcmass[1] = result['mcmass'][2]
+        v0mcmass[2] = result['mcmass'][3]
+
         result['true_matching'] = matching
+        result['upsmcmass'] = result['mcmass'][0]
+        result['v0mcmass'] = v0mcmass
 
 
-    return frame[['eid','true_matching','upsmcidx']].set_index('eid')
+
+    return frame[['eid','true_matching','upsmcidx','upsmcmass','v0mcmass']].set_index('eid')
         
 
 

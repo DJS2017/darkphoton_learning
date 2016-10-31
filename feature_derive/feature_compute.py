@@ -330,7 +330,7 @@ def update_v0mass_avg(rawtable):
     conn = psycopg2.connect(database="darkphoton",user="yunxuanli")
     cur_nl = conn.cursor()
 
-    cur_nl.execute("SELECT eid,nups,upsd1idx,upsd2idx,upsd3idx,v0mass FROM %s WHERE nups>0" % rawtable)
+    cur_nl.execute("SELECT eid,nups,upsd1idx,upsd2idx,upsd3idx,v0mass,v0mcidx,mcmass FROM %s WHERE nups>0" % rawtable)
     rows_nl = cur_nl.fetchall()
     data_mc = np.array(rows_nl, dtype=object)
     data = {'eid':data_mc[:,0],
@@ -339,7 +339,10 @@ def update_v0mass_avg(rawtable):
             'upsd2idx':data_mc[:,3],
             'upsd3idx':data_mc[:,4],
             'v0mass':data_mc[:,5],
-            'v0mass_avg':Series(data_mc.shape[0]*[np.zeros(1)])}
+            'v0mcidx':data_mc[:,6],
+            'mcmass':data_mc[:,7],
+            'v0mass_avg':Series(data_mc.shape[0]*[np.zeros(1)]),
+            'v0mcmass_avg':Series(data_mc.shape[0]*[np.zeros(1)])}
     frame = DataFrame(data)
 
     for event_id in frame.index:
@@ -347,12 +350,21 @@ def update_v0mass_avg(rawtable):
         nups = result['nups']
 
         v0mass_avg = np.zeros(nups)
+        v0mcmass_avg = np.zeros(nups)
         for j in range(nups):
             v0mass_avg[j] = (result['v0mass'][result['upsd1idx'][j]] + result['v0mass'][result['upsd2idx'][j]] + result['v0mass'][result['upsd3idx'][j]]) *1.0 / 3
-
+            index1 = result['v0mcidx'][result['upsd1idx'][j]]
+            index2 = result['v0mcidx'][result['upsd2idx'][j]]
+            index3 = result['v0mcidx'][result['upsd3idx'][j]]
+            if(index1>-1 and index2>-1 and index3>-1):
+                v0mcmass_avg[j] = (result['mcmass'][index1] + result['mcmass'][index2] + result['mcmass'][index3]) *1.0/3
+            else:
+                v0mcmass_avg[j] = -1
+        
         result['v0mass_avg'] = v0mass_avg
+        result['v0mcmass_avg'] = v0mcmass_avg
 
-    return frame[['eid','v0mass_avg']].set_index('eid')
+    return frame[['eid','v0mass_avg','v0mcmass_avg']].set_index('eid')
 
 
 
@@ -361,14 +373,31 @@ def update_upsmass(rawtable):
     conn = psycopg2.connect(database="darkphoton",user="yunxuanli")
     cur_nl = conn.cursor()
 
-    cur_nl.execute("SELECT eid,upsmass FROM %s WHERE nups>0" % rawtable)
+    cur_nl.execute("SELECT eid,upsmass,mcmass,upsmcidx FROM %s WHERE nups>0" % rawtable)
     rows_nl = cur_nl.fetchall()
     data_mc = np.array(rows_nl, dtype=object)
     data = {'eid':data_mc[:,0],
-            'upsmass':data_mc[:,1]}
+            'upsmass':data_mc[:,1],
+            'mcmass':data_mc[:,2],
+            'upsmcidx':data_mc[:,3],
+            'upsmcmass':Series(data_mc.shape[0]*[np.zeros(1)])}
     frame = DataFrame(data)
 
-    return frame[['eid','upsmass']].set_index('eid')
+    for event_id in frame.index:
+        result = frame.loc[event_id]
+        nups = result['nups']
+
+        upsmcmass = np.zeros(nups)
+        for j in range(nups):
+            index = result['upsmcidx'][j]
+            if(index>-1):
+                upsmcmass[j] = result['mcmass'][index]
+            else:
+                upsmcmass[j] = -1
+    
+        result['upsmcmass'] = upsmcmass
+
+    return frame[['eid','upsmass','upsmcmass']].set_index('eid')
 
 
 

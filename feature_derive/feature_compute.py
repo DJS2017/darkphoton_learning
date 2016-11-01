@@ -102,12 +102,13 @@ def update_mcmass(rawtable):
 
     for event_id in frame.index:
         result = frame.loc[event_id]
-
-        frame.loc[event_id,'upsmcmass'] = result['mcmass'][0]
+        v0mcmass = np.zeros(3)
 
         v0mcmass[0] = result['mcmass'][1]
         v0mcmass[1] = result['mcmass'][2]
         v0mcmass[2] = result['mcmass'][3]
+
+        frame.loc[event_id,'upsmcmass'] = result['mcmass'][0]
         frame.loc[event_id,'v0mcmass'] = v0mcmass
 
     return frame[['eid','nups','upsmcidx','upsmcmass','v0mcmass']].set_index('eid')

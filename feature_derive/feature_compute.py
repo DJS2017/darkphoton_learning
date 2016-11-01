@@ -109,7 +109,8 @@ def update_mcmass(rawtable):
         result = frame.loc[event_id]
         v0mcmass = np.array(result['mcmass'][1:4])
         
-        frame.loc[event_id,'upsmcmass'] = result['mcmass'][0]
+        #frame.loc[event_id,'upsmcmass'] = result['mcmass'][0]
+        result['upsmcmass'] = result['mcmass'][0]
         #frame.loc[event_id,'v0mcmass'] = v0mcmass
         result['v0mcmass'] = v0mcmass
         #frame.loc[event_id,'v0mcmass'][0] = result['mcmass'][1]

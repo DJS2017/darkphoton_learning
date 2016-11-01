@@ -96,8 +96,7 @@ def update_mcmass(rawtable):
             'nups':data_mc[:,1],
             'upsmcidx':data_mc[:,2],
             'mcmass':data_mc[:,3],
-            'upsmcmass':Series(np.zeros(data_mc.shape[0])),
-            'v0mcmass':Series(data_mc.shape[0]*[np.zeros(1)])}
+            'upsvmcmass':Series(data_mc.shape[0]*[np.zeros(1)])}
     frame = DataFrame(data)
 
     count = 0
@@ -107,17 +106,17 @@ def update_mcmass(rawtable):
             print count
         
         result = frame.loc[event_id]
-        v0mcmass = np.array(result['mcmass'][1:4])
+        #v0mcmass = np.array(result['mcmass'][1:4])
         
         #frame.loc[event_id,'upsmcmass'] = result['mcmass'][0]
-        result['upsmcmass'] = result['mcmass'][0]
+        result['upsvmcmass'] = result['mcmass'][0:4]
         #frame.loc[event_id,'v0mcmass'] = v0mcmass
-        result['v0mcmass'] = v0mcmass
+        #result['v0mcmass'] = v0mcmass
         #frame.loc[event_id,'v0mcmass'][0] = result['mcmass'][1]
         #frame.loc[event_id,'v0mcmass'][1] = result['mcmass'][2]
         #frame.loc[event_id,'v0mcmass'][2] = result['mcmass'][3]
 
-    return frame[['eid','nups','upsmcidx','upsmcmass','v0mcmass']].set_index('eid')
+    return frame[['eid','nups','upsmcidx','upsvmcmass']].set_index('eid')
 
 
 

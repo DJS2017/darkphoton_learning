@@ -100,7 +100,11 @@ def update_mcmass(rawtable):
             'v0mcmass':Series(data_mc.shape[0]*[[0.0, 0.0, 0.0]])}
     frame = DataFrame(data)
 
+    count = 0
     for event_id in frame.index:
+        count = count + 1
+        if(count % 1000 == 0):
+            print count
         result = frame.loc[event_id]
 
         frame.loc[event_id,'upsmcmass'] = result['mcmass'][0]

@@ -84,9 +84,13 @@ class KernelRegression:
             for i in range(len(dist[0])):
                 denominator = denominator + self.kernel(dist[0][i])
                 numerator = numerator + self.kernel(dist[0][i]) * self.values[neighbor_index[0][i]]
-            result.append(numerator/denominator)
+            
+            if(numerator == 0.0):
+                result.append(0.0)
+            else:
+                result.append(numerator*1.0/denominator)
 
-        return result
+        return np.array(result)
 
     
     def loss(self, X, y):
@@ -94,7 +98,7 @@ class KernelRegression:
 
         """
         y_predict = self.predict(X)
-        return sum((self.values - y_predict)**2)/len(y_predict)
+        return sum((y - y_predict)**2)/len(y_predict)
 
 
     def score(self, X, y):
@@ -121,10 +125,16 @@ class KernelRegression:
         return result
 
 
-    def set_params(self, **params):
+    def set_params(self, params):
         """Set params of this estimator
         
+        Parameter
+        -----------
+        params: dict
+                map from string to any
+
         """
+
         valid_params = self.get_params()
         for key, value in params.iteritems():
             if(key in valid_params.keys()):

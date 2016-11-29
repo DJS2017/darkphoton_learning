@@ -1,10 +1,13 @@
 #!/usr/bin/env python
 
+# This script applies BackgroundFeatureCompute to 
+# calculate features for background data.
+
 #import sys
 #sys.path.append('/home/yunxuanli/DarkMatter/darkphoton_learning/feature_derive')
 import numpy as np
 import pandas as pd
-import feature_compute_background as fc
+import BackgroundFeatureCompute as fc
 
 
 print 'massdiff, nlfrombrem, rphoton, recoilmass'

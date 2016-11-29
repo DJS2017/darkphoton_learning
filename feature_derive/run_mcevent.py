@@ -1,10 +1,13 @@
 #!/usr/bin/env python
 
+# This script applies SignalFeatureCompute to
+# calculate features from signal data
+
 import sys
 sys.path.append('/home/yunxuanli/DarkMatter/darkphoton_learning/feature_derive')
 import numpy as np
 import pandas as pd
-import feature_compute as fc
+import SignalFeatureCompute as fc
 
 
 

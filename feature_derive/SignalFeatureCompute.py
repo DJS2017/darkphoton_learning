@@ -454,7 +454,21 @@ def update_upsmass(rawtable):
 
 
 
+def upsrawfeature(rawtable):
+    conn = psycopg2.connect(database="darkphoton",user="yunxuanli")
+    cur_nl = conn.cursor()
 
+    cur_nl.execute("SELECT eid,nups,upsmass,upsmasserr,upscosth, upsenergy FROM %s WHERE nups>0" % rawtable)
+    rows_nl = cur_nl.fetchall()
+    data_mc = np.array(rows_nl, dtype=object)
+    data = {'eid':data_mc[:,0],
+            'nups':data_mc[:,1],
+            'upsmass':data_mc[:,2],
+            'upsmasserr':data_mc[:,3],
+            'upscosth':data_mc[:,4],
+            'upsenergy':data_mc[:,5]}
+    frame = DataFrame(data)
+    return frame[['eid','nups','upsmass','upsmasserr','upscosth','upsenergy']].set_index('eid')
 
 # haven't tested from here to last line:
 

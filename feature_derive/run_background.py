@@ -3,8 +3,8 @@
 # This script applies BackgroundFeatureCompute to 
 # calculate features for background data.
 
-#import sys
-#sys.path.append('/home/yunxuanli/DarkMatter/darkphoton_learning/feature_derive')
+import sys
+sys.path.append('/home/yunxuanli/DarkMatter/darkphoton_learning/feature_derive/featuretable')
 import numpy as np
 import pandas as pd
 import BackgroundFeatureCompute as fc

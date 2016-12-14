@@ -4,7 +4,7 @@
 # calculate features from signal data
 
 import sys
-sys.path.append('/home/yunxuanli/DarkMatter/darkphoton_learning/feature_derive')
+sys.path.append('/home/yunxuanli/DarkMatter/darkphoton_learning/feature_derive/featuretable')
 import numpy as np
 import pandas as pd
 import SignalFeatureCompute as fc

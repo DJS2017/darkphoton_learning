@@ -3,6 +3,8 @@
 # This script aims to flatten derived features 
 # of signal data
 
+import sys
+sys.path.append('/Users/yunxuanli/Documents/Caltechphd/research/DarkMatter/darkphoton_learning/feature_derive/featuretable')
 import numpy as np
 import csv
 import pandas as pd
@@ -11,7 +13,7 @@ from pandas import DataFrame, Series
 # load data
 massdiff = pd.read_hdf('massdiff_2l.hdf','massdiff')
 rphoton = pd.read_hdf('rphoton_2l.hdf','rphoton')
-nlfrombrem = pd.read_hdf('nlfrombrem_2l.hdf','nlfrombrem')
+#nlfrombrem = pd.read_hdf('nlfrombrem_2l.hdf','nlfrombrem')
 recoilmass = pd.read_hdf('recoilmass_2l.hdf','recoilmass')
 v0mass_avg = pd.read_hdf('v0mass_avg_2l.hdf','v0mass_avg')
 upsmass = pd.read_hdf('upsmass_2l.hdf','upsmass')
@@ -22,7 +24,7 @@ rphoton_costh = pd.read_hdf('rphoton_costh_2l.hdf','rphoton_costh')
 
 # join data
 frame = pd.merge(rphoton,massdiff,left_index=True,right_index=True)
-frame = pd.merge(frame,nlfrombrem,left_index=True,right_index=True)
+#frame = pd.merge(frame,nlfrombrem,left_index=True,right_index=True)
 frame = pd.merge(frame,true_match,left_index=True,right_index=True)
 frame = pd.merge(frame, recoilmass,left_index=True,right_index=True)
 frame = pd.merge(frame, v0mass_avg,left_index=True,right_index=True)

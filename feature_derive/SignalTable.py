@@ -97,7 +97,8 @@ if __name__ == '__main__':
             isTrueUps = isTrueA1 and isTrueA2 and isTrueA3
             truth_matching = isTrueUps
         
-            temp = [upsmass, 
+            temp = [event['eid'],
+                    upsmass, 
                     A1mass, A2mass, A3mass, massdiff,
                     recoil_px, recoil_py, recoil_pz, recoil_e, recoil_costh, recoil_mass2,
                     A1_lepton1_pid, A1_lepton2_pid, A2_lepton1_pid, A2_lepton2_pid, A3_lepton1_pid, A3_lepton2_pid,
@@ -108,7 +109,7 @@ if __name__ == '__main__':
 
 
     # insert into a dataframe, and store
-    df = DataFrame(table, columns=['upsmass',
+    df = DataFrame(table, columns=['eid', 'upsmass',
                 'A1mass', 'A2mass', 'A3mass', 'massdiff',
                 'recoil_px', 'recoil_py', 'recoil_pz', 'recoil_e', 'recoil_costh', 'recoil_mass2',
                 'A1_lepton1_pid', 'A1_lepton2_pid', 'A2_lepton1_pid', 'A2_lepton2_pid', 'A3_lepton1_pid', 'A3_lepton2_pid',

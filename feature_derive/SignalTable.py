@@ -103,7 +103,7 @@ if __name__ == '__main__':
             isTrueUps = isTrueA1 and isTrueA2 and isTrueA3
             truth_matching = isTrueUps
         
-            temp = [event['eid'],
+            temp = [str(event['eid']),
                     upsmcmass, A1mcmass, A2mcmass, A3mcmass,
                     upsmass, 
                     A1mass, A2mass, A3mass, massdiff,

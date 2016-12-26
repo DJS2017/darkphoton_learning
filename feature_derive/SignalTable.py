@@ -40,6 +40,12 @@ if __name__ == '__main__':
     while(event != None):
         nups = event['nups']
         for candidate_id in range(nups):
+            # MC: upsmcmass, A1mcmass, A2mcmass, A3mcmass
+            upsmcmass = event['mcmass'][0]
+            A1mcmass = event['mcmass'][1]
+            A2mcmass = event['mcmass'][2]
+            A3mcmass = event['mcmass'][3]
+
             ## upsmass
             upsmass = event['upsmass'][candidate_id]
             ups_p3 = event['upsp3'][candidate_id]
@@ -98,6 +104,7 @@ if __name__ == '__main__':
             truth_matching = isTrueUps
         
             temp = [event['eid'],
+                    upsmcmass, A1mcmass, A2mcmass, A3mcmass,
                     upsmass, 
                     A1mass, A2mass, A3mass, massdiff,
                     recoil_px, recoil_py, recoil_pz, recoil_e, recoil_costh, recoil_mass2,
@@ -109,7 +116,9 @@ if __name__ == '__main__':
 
 
     # insert into a dataframe, and store
-    df = DataFrame(table, columns=['eid', 'upsmass',
+    df = DataFrame(table, columns=['eid', 
+                'upsmcmass', 'A1mcmass', 'A2mcmass', 'A3mcmass',
+                'upsmass',
                 'A1mass', 'A2mass', 'A3mass', 'massdiff',
                 'recoil_px', 'recoil_py', 'recoil_pz', 'recoil_e', 'recoil_costh', 'recoil_mass2',
                 'A1_lepton1_pid', 'A1_lepton2_pid', 'A2_lepton1_pid', 'A2_lepton2_pid', 'A3_lepton1_pid', 'A3_lepton2_pid',

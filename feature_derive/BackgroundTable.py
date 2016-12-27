@@ -27,8 +27,8 @@ if __name__ == '__main__':
     print 'connect to database successfully!'
     
     print 'SQL query execution ...'
-    sql = 'SELECT * from %s where nups>0'
-    cur.execute(sql % 'mcevent_2l')
+    sql = 'SELECT * from %s where nups>0 limit 50'
+    cur.execute(sql % 'background')
     print 'query successfully!'
 
     # derive features
@@ -41,10 +41,10 @@ if __name__ == '__main__':
         nups = event['nups']
         for candidate_id in range(nups):
             # MC: upsmcmass, A1mcmass, A2mcmass, A3mcmass
-            upsmcmass = event['mcmass'][0]
-            A1mcmass = event['mcmass'][1]
-            A2mcmass = event['mcmass'][2]
-            A3mcmass = event['mcmass'][3]
+            #upsmcmass = event['mcmass'][0]
+            #A1mcmass = event['mcmass'][1]
+            #A2mcmass = event['mcmass'][2]
+            #A3mcmass = event['mcmass'][3]
 
             ## upsmass
             upsmass = event['upsmass'][candidate_id]
@@ -97,19 +97,18 @@ if __name__ == '__main__':
             A3_lepton2_pid = pidMap(event, A3_lepton_lund, A3_lepton2_idx)
             
             # truth-matching
-            isTrueA1 = (event['v0mcidx'][A1]>-1) and abs(A1_lepton_lund)==abs(event['mclund'][event['dauidx'][event['v0mcidx'][A1]]])
-            isTrueA2 = (event['v0mcidx'][A2]>-1) and abs(A2_lepton_lund)==abs(event['mclund'][event['dauidx'][event['v0mcidx'][A2]]])
-            isTrueA3 = (event['v0mcidx'][A3]>-1) and abs(A3_lepton_lund)==abs(event['mclund'][event['dauidx'][event['v0mcidx'][A3]]])
-            isTrueUps = isTrueA1 and isTrueA2 and isTrueA3
-            truth_matching = isTrueUps
+            #isTrueA1 = (event['v0mcidx'][A1]>-1) and abs(A1_lepton_lund)==abs(event['mclund'][event['dauidx'][event['v0mcidx'][A1]]])
+            #isTrueA2 = (event['v0mcidx'][A2]>-1) and abs(A2_lepton_lund)==abs(event['mclund'][event['dauidx'][event['v0mcidx'][A2]]])
+            #isTrueA3 = (event['v0mcidx'][A3]>-1) and abs(A3_lepton_lund)==abs(event['mclund'][event['dauidx'][event['v0mcidx'][A3]]])
+            #isTrueUps = isTrueA1 and isTrueA2 and isTrueA3
+            #truth_matching = isTrueUps
         
             temp = [str(event['eid']),
-                    upsmcmass, A1mcmass, A2mcmass, A3mcmass,
+                    #upsmcmass, A1mcmass, A2mcmass, A3mcmass,
                     upsmass, 
                     A1mass, A2mass, A3mass, massdiff,
                     recoil_px, recoil_py, recoil_pz, recoil_e, recoil_costh, recoil_mass2,
-                    A1_lepton1_pid, A1_lepton2_pid, A2_lepton1_pid, A2_lepton2_pid, A3_lepton1_pid, A3_lepton2_pid,
-                    truth_matching]
+                    A1_lepton1_pid, A1_lepton2_pid, A2_lepton1_pid, A2_lepton2_pid, A3_lepton1_pid, A3_lepton2_pid]
             table.append(temp)
         
         event = cur.fetchone()
@@ -117,10 +116,9 @@ if __name__ == '__main__':
 
     # insert into a dataframe, and store
     df = DataFrame(table, columns=['eid', 
-                'upsmcmass', 'A1mcmass', 'A2mcmass', 'A3mcmass',
+                #'upsmcmass', 'A1mcmass', 'A2mcmass', 'A3mcmass',
                 'upsmass',
                 'A1mass', 'A2mass', 'A3mass', 'massdiff',
                 'recoil_px', 'recoil_py', 'recoil_pz', 'recoil_e', 'recoil_costh', 'recoil_mass2',
-                'A1_lepton1_pid', 'A1_lepton2_pid', 'A2_lepton1_pid', 'A2_lepton2_pid', 'A3_lepton1_pid', 'A3_lepton2_pid',
-                'truth_matching'])
-    df.to_hdf('signaltable.hdf','signal')
+                'A1_lepton1_pid', 'A1_lepton2_pid', 'A2_lepton1_pid', 'A2_lepton2_pid', 'A3_lepton1_pid', 'A3_lepton2_pid'])
+    df.to_hdf('backgroundtable.hdf','background')

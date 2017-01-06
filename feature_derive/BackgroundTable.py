@@ -87,14 +87,14 @@ if __name__ == '__main__':
             A3_lepton1_idx = event['v0d1idx'][A3]
             A3_lepton2_idx = event['v0d2idx'][A3]
             
-            A1_lepton1_pid = pidMap(event, A1_lepton_lund, A1_lepton1_idx)
-            A1_lepton2_pid = pidMap(event, A1_lepton_lund, A1_lepton2_idx)
+            #A1_lepton1_pid = pidMap(event, A1_lepton_lund, A1_lepton1_idx)
+            #A1_lepton2_pid = pidMap(event, A1_lepton_lund, A1_lepton2_idx)
             
-            A2_lepton1_pid = pidMap(event, A2_lepton_lund, A2_lepton1_idx)
-            A2_lepton2_pid = pidMap(event, A2_lepton_lund, A2_lepton2_idx)
+            #A2_lepton1_pid = pidMap(event, A2_lepton_lund, A2_lepton1_idx)
+            #A2_lepton2_pid = pidMap(event, A2_lepton_lund, A2_lepton2_idx)
             
-            A3_lepton1_pid = pidMap(event, A3_lepton_lund, A3_lepton1_idx)
-            A3_lepton2_pid = pidMap(event, A3_lepton_lund, A3_lepton2_idx)
+            #A3_lepton1_pid = pidMap(event, A3_lepton_lund, A3_lepton1_idx)
+            #A3_lepton2_pid = pidMap(event, A3_lepton_lund, A3_lepton2_idx)
             
             # truth-matching
             #isTrueA1 = (event['v0mcidx'][A1]>-1) and abs(A1_lepton_lund)==abs(event['mclund'][event['dauidx'][event['v0mcidx'][A1]]])
@@ -107,8 +107,8 @@ if __name__ == '__main__':
                     #upsmcmass, A1mcmass, A2mcmass, A3mcmass,
                     upsmass, 
                     A1mass, A2mass, A3mass, massdiff,
-                    recoil_px, recoil_py, recoil_pz, recoil_e, recoil_costh, recoil_mass2,
-                    A1_lepton1_pid, A1_lepton2_pid, A2_lepton1_pid, A2_lepton2_pid, A3_lepton1_pid, A3_lepton2_pid]
+                    recoil_px, recoil_py, recoil_pz, recoil_e, recoil_costh, recoil_mass2]
+                    #A1_lepton1_pid, A1_lepton2_pid, A2_lepton1_pid, A2_lepton2_pid, A3_lepton1_pid, A3_lepton2_pid]
             table.append(temp)
         
         event = cur.fetchone()
@@ -119,6 +119,6 @@ if __name__ == '__main__':
                 #'upsmcmass', 'A1mcmass', 'A2mcmass', 'A3mcmass',
                 'upsmass',
                 'A1mass', 'A2mass', 'A3mass', 'massdiff',
-                'recoil_px', 'recoil_py', 'recoil_pz', 'recoil_e', 'recoil_costh', 'recoil_mass2',
-                'A1_lepton1_pid', 'A1_lepton2_pid', 'A2_lepton1_pid', 'A2_lepton2_pid', 'A3_lepton1_pid', 'A3_lepton2_pid'])
+                'recoil_px', 'recoil_py', 'recoil_pz', 'recoil_e', 'recoil_costh', 'recoil_mass2'])
+                #'A1_lepton1_pid', 'A1_lepton2_pid', 'A2_lepton1_pid', 'A2_lepton2_pid', 'A3_lepton1_pid', 'A3_lepton2_pid'])
     df.to_hdf('backgroundtable.hdf','background')

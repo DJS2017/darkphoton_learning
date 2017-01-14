@@ -27,7 +27,7 @@ if __name__ == '__main__':
     print 'connect to database successfully!'
     
     print 'SQL query execution ...'
-    sql = 'SELECT * from %s where nups>0'
+    sql = 'SELECT * from %s'
     cur.execute(sql % 'mcevent_2l')
     print 'query successfully!'
 

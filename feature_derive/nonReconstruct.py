@@ -47,7 +47,7 @@ if __name__ == '__main__':
         temp = [str(event['eid']),
                 upsmcmass, A1mcmass, A2mcmass, A3mcmass,
                 0]
-            table.append(temp)
+        table.append(temp)
         
         event = cur.fetchone()
 

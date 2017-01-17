@@ -10,15 +10,6 @@ from pandas import DataFrame, Series
 import psycopg2
 import psycopg2.extras
 
-def pidMap(event, lund, index):
-    if(abs(lund) == 211):
-        return event['piselectorsmap'][event['pitrkidx'][index]]
-    elif(abs(lund) == 11):
-        return event['eselectorsmap'][event['eletrkidx'][index]]
-    elif(abs(lund) == 13):
-        return event['muselectorsmap'][event['mutrkidx'][index]]
-
-
 if __name__ == '__main__':
 	# connection to database
     print 'connect to database ...'
@@ -27,7 +18,7 @@ if __name__ == '__main__':
     print 'connect to database successfully!'
     
     print 'SQL query execution ...'
-    sql = 'SELECT * from %s where nups=0'
+    sql = 'SELECT * from %s'
     cur.execute(sql % 'mcevent_2l')
     print 'query successfully!'
 

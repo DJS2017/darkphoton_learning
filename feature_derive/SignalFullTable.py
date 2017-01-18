@@ -40,7 +40,7 @@ if __name__ == '__main__':
     event = cur.fetchone()
     while(event != None):
         nups = event['nups']
-        if(nups > 0) {
+        if(nups > 0):
             for candidate_id in range(nups):
                 # MC: upsmcmass, A1mcmass, A2mcmass, A3mcmass
                 upsmcmass = event['mcmass'][0]
@@ -113,8 +113,7 @@ if __name__ == '__main__':
                         A1_lepton1_pid, A1_lepton2_pid, A2_lepton1_pid, A2_lepton2_pid, A3_lepton1_pid, A3_lepton2_pid,
                         truth_matching]
                 table.append(temp)
-        }
-        else {
+        else:
             upsmcmass = event['mcmass'][0]
             A1mcmass = event['mcmass'][1]
             A2mcmass = event['mcmass'][2]
@@ -128,7 +127,6 @@ if __name__ == '__main__':
                     float('nan'), float('nan'), float('nan'), float('nan'), float('nan'), float('nan'),
                     0]
             table.append(temp)
-        }
         
         event = cur.fetchone()
 

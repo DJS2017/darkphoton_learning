@@ -28,7 +28,7 @@ if __name__ == '__main__':
     
     sector = '2l'
     print 'SQL query execution ...'
-    sql = 'SELECT * from %s where nups>0'
+    sql = 'SELECT * from %s'
     cur.execute(sql % 'mcevent_' + sector)
     print 'query successfully!'
 

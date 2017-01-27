@@ -35,7 +35,7 @@ if __name__ == '__main__':
     print 'connect to database successfully!'
     
     print 'SQL query execution ...'
-    sql = 'SELECT * from %s where nups>0 limit 50'
+    sql = 'SELECT * from %s '
     cur.execute(sql % 'mcevent_2l')
     print 'query successfully!'
 
@@ -53,6 +53,9 @@ if __name__ == '__main__':
             A1mcmass = event['mcmass'][1]
             A2mcmass = event['mcmass'][2]
             A3mcmass = event['mcmass'][3]
+            A1_lepton_mclund = event['mclund'][5]
+            A2_lepton_mclund = event['mclund'][7]
+            A3_lepton_mclund = event['mclund'][9]
 
             ## upsmass
             upsmass = event['upsmass'][candidate_id]
@@ -125,6 +128,8 @@ if __name__ == '__main__':
                     recoil_px, recoil_py, recoil_pz, recoil_e, recoil_costh, recoil_mass2,
                     A1_lepton1_pid, A1_lepton2_pid, A2_lepton1_pid, A2_lepton2_pid, A3_lepton1_pid, A3_lepton2_pid,
                     A1_lepton1_mass2, A2_lepton1_mass2, A3_lepton1_mass2,
+                    A1_lepton_mclund, A2_lepton_mclund, A3_lepton_mclund,
+                    A1_lepton_lund, A2_lepton_lund, A3_lepton_lund,
                     truth_matching]
             table.append(temp)
         
@@ -139,5 +144,7 @@ if __name__ == '__main__':
                 'recoil_px', 'recoil_py', 'recoil_pz', 'recoil_e', 'recoil_costh', 'recoil_mass2',
                 'A1_lepton1_pid', 'A1_lepton2_pid', 'A2_lepton1_pid', 'A2_lepton2_pid', 'A3_lepton1_pid', 'A3_lepton2_pid',
                 'A1_lepton1_mass2', 'A2_lepton1_mass2', 'A3_lepton1_mass2',
+                'A1_lepton_mclund', 'A2_lepton_mclund', 'A3_lepton_mclund',
+                'A1_lepton_lund', 'A2_lepton_lund', 'A3_lepton_lund',
                 'truth_matching'])
-    df.to_hdf('signal_efficiency_2l.hdf','signal')
+    df.to_hdf('signal_lund_2l.hdf','signal')

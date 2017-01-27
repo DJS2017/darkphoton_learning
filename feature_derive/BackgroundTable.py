@@ -107,8 +107,8 @@ if __name__ == '__main__':
                     #upsmcmass, A1mcmass, A2mcmass, A3mcmass,
                     upsmass, 
                     A1mass, A2mass, A3mass, massdiff,
-                    recoil_px, recoil_py, recoil_pz, recoil_e, recoil_costh, recoil_mass2]
-                    #A1_lepton1_pid, A1_lepton2_pid, A2_lepton1_pid, A2_lepton2_pid, A3_lepton1_pid, A3_lepton2_pid]
+                    recoil_px, recoil_py, recoil_pz, recoil_e, recoil_costh, recoil_mass2,
+                    A1_lepton1_pid, A1_lepton2_pid, A2_lepton1_pid, A2_lepton2_pid, A3_lepton1_pid, A3_lepton2_pid]
             table.append(temp)
         
         event = cur.fetchone()
